@@ -12,19 +12,17 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class YahtzeeView extends Stage implements View {
 	private Controller controller;
 	
-	private InputPanel panel;
+	private GridPane panel;
 	private Stage stage;
 	private List<Stage> gameStages;
 	
-	public YahtzeeView(String name, Stage stage, InputPanel pane){
-		
-		
-		
+	public YahtzeeView(String name, Stage stage, GridPane pane){
 		setStage(stage);
 		setPanel(pane);
 		
@@ -32,30 +30,24 @@ public class YahtzeeView extends Stage implements View {
         getStage().setTitle(name);
         getStage().setScene(mainScene);
         sizeToScene();
-        stage.show();
         
-        /*secondStage = new Stage();
-        secondStage.setTitle(name);
-        secondStage.setScene(new Scene(pane, 400, 150));
-        sizeToScene();
-        secondStage.show();*/
         
 	}
 	
-	public void openGameViews() {
-		getStage().hide();
-		gameStages = new ArrayList<Stage>();
-		for(String player: getController().getDb()) {
-			Stage gameStage = new Stage();
-			YahtzeePanel gamePanel = new YahtzeePanel();
-			gameStage.setScene(new Scene(gamePanel, 500, 500));
-			gameStages.add(gameStage);
-		}
-		for(Stage gameStage: gameStages) {
-			gameStage.show();
-		}
+	public void openGameWindow(String player, Controller controller) {
+		Stage gameStage = new Stage();
+		YahtzeeWindow gameWindow = new YahtzeeWindow(player, controller);
+		gameStage.setTitle("Yahtzee");
+		gameStage.setScene(new Scene(gameWindow, 500, 500));
+		gameStage.show();
+		controller.addObserver(player, gameWindow);
 		
 		
+		
+	}
+	
+	public void closeInput() {
+		stage.hide();
 	}
 	
 
@@ -67,11 +59,11 @@ public class YahtzeeView extends Stage implements View {
 		this.stage = stage;
 	}
 
-	private void setPanel(InputPanel pane) {
+	private void setPanel(GridPane pane) {
 		this.panel = pane;
 	}
 
-	private InputPanel getPanel() {
+	private GridPane getPanel() {
 		return panel;
 	}	
 
@@ -90,21 +82,15 @@ public class YahtzeeView extends Stage implements View {
 	}
 
 
-	@Override
-	public void addEventListener(EventHandler<ActionEvent> listener){
-		getPanel().addEventListener(listener);
-	}
+	
 
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 		
 	}
-	
-	@Override
-	public String getName() {
-		return getPanel().getName();
-	}
+
+
 	
 	
 	
