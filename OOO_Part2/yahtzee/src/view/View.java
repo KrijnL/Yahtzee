@@ -10,11 +10,9 @@ import javafx.scene.input.KeyEvent;
 public interface View extends Observer{
 	
 	
-	public void addEventListener(EventHandler<ActionEvent> listener);
 	
 	public void start();
-
-	void setController(Controller controller);
-	public String getName();
-	public void openGameViews();
+	public void closeInput();
+	public void setController(Controller controller);
+	public void openGameWindow(String player, Controller controller);
 }

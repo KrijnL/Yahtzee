@@ -4,6 +4,7 @@ package view;
 import java.util.Observable;
 import java.util.Observer;
 
+import controller.InputController;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -14,13 +15,15 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
-public class InputPanel extends GridPane {
+public class InputWindow extends GridPane {
 
 	private TextField nameField;
 	private Label messageLabel;
 	private Button buttonOk, buttonCancel;
+	private InputController controller;
+	
 
-	public InputPanel() {
+	public InputWindow(InputController controller) {
 		this.setHgap(10);
 		this.setVgap(10);
 		this.setPadding(new Insets(10, 10, 10, 10));
@@ -39,22 +42,27 @@ public class InputPanel extends GridPane {
 		buttonCancel.setOnAction(new CancelListener());
 		buttonOk = new Button("Save");
 		add(buttonOk, 1, 3);
-
-
-
+		buttonOk.setOnAction(new OkListener());
+		
+		this.controller = controller;
 	}
 
+
 	class CancelListener implements EventHandler<ActionEvent> {
+		
 		@Override
 		public void handle(ActionEvent event) {
-			System.exit(0);
+			controller.handleCancel();
 		}
 	}
 
 	class OkListener implements EventHandler<ActionEvent> {
 		@Override
 		public void handle(ActionEvent event) {
+			
 			String text = nameField.getText();
+			controller.handleOk(text);
+			nameField.setText("");
 		}
 	}
 
