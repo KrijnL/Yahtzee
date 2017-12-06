@@ -1,17 +1,9 @@
 package view;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-
-import javax.swing.JOptionPane;
 
 import controller.Controller;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -20,7 +12,6 @@ public class YahtzeeView extends Stage implements View {
 	
 	private GridPane panel;
 	private Stage stage;
-	private List<Stage> gameStages;
 	
 	public YahtzeeView(String name, Stage stage, GridPane pane){
 		setStage(stage);
@@ -34,14 +25,14 @@ public class YahtzeeView extends Stage implements View {
         
 	}
 	
-	public void openGameWindow(String player, Controller controller) {
+	public YahtzeeWindow openGameWindow(String player, Controller controller, boolean active) {
 		Stage gameStage = new Stage();
-		YahtzeeWindow gameWindow = new YahtzeeWindow(player, controller);
-		gameStage.setTitle("Yahtzee");
+		YahtzeeWindow gameWindow = new YahtzeeWindow(player, controller, active);
+		gameStage.setTitle(player);
 		gameStage.setScene(new Scene(gameWindow, 500, 500));
 		gameStage.show();
-		controller.addObserver(player, gameWindow);
-		
+		//controller.addPlayerObserver(player, gameWindow);
+		return gameWindow;
 		
 		
 	}
@@ -63,9 +54,6 @@ public class YahtzeeView extends Stage implements View {
 		this.panel = pane;
 	}
 
-	private GridPane getPanel() {
-		return panel;
-	}	
 
 	private Controller getController() {
 		return controller;
@@ -80,15 +68,15 @@ public class YahtzeeView extends Stage implements View {
 	public void start() {
 		getStage().show();		
 	}
+	
+	@Override
+	public String getPlayer() {
+		return this.getPlayer();
+	}
 
 
 	
 
-	@Override
-	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 	

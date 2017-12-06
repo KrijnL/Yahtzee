@@ -6,14 +6,32 @@ import java.util.Random;
  */
 
 public class Dice {
-	Random rand;
+	private Random rand;
+	private boolean saved;
+	private int numberThrown;
 	
 	public Dice() {
 		rand = new Random();
+		this.saved=false;
 	}
 	
+	
 	public int throwDice() {
-		return rand.nextInt(6) + 1;
+		this.numberThrown = rand.nextInt(6) + 1;
+		return numberThrown;
 	}
+	
+	public void setSaved(boolean saved) {
+		this.saved = saved;
+	}
+	
+	public void setSaved() {
+		this.saved = true;
+	}
+	
+	public boolean isSaved() {
+		return this.saved;
+	}
+	
 	
 }
