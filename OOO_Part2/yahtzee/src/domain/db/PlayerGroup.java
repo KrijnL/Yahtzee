@@ -51,4 +51,12 @@ public class PlayerGroup {
 		
 		
 	}
+	
+	public String getActivePlayer() {
+		for(Player p: getPlayers()) {
+			if(p.getTurn())
+				return p.toString();
+		}
+		throw new DomainException("No active players");
+	}
 }

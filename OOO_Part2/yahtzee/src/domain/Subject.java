@@ -1,6 +1,6 @@
 package domain;
 
-import view.Observer;
+import domain.Observer;
 
 public interface Subject {
 	public void addObserver(Observer o);

@@ -31,6 +31,7 @@ public class YahtzeeView extends Stage implements View {
 		gameStage.setTitle(player);
 		gameStage.setScene(new Scene(gameWindow, 500, 500));
 		gameStage.show();
+		controller.addObserver(gameWindow);
 		//controller.addPlayerObserver(player, gameWindow);
 		return gameWindow;
 		

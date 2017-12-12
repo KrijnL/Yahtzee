@@ -1,20 +1,23 @@
 package domain.model;
 
 import java.util.List;
-import view.Observer;
+import domain.Observer;
 import domain.DomainException;
 import domain.db.PlayerGroup;
 
 public class Service {
 	
 	PlayerGroup players;
+	YahtzeeGame game;
 	
 	public Service() {
 		players = new PlayerGroup();
+		game = new YahtzeeGame(players);
 	}
 	
 	public void addPlayer(Player player) {
 		players.addPlayer(player);
+		game.setScoreSheets();
 	}
 
 	public List<Player> getPlayers() {
@@ -27,15 +30,15 @@ public class Service {
 	}
 	
 	public void throwDice(Player player){
-		players.getPlayer(player).throwDice();
+		game.throwDice(player);
 	}
 	
-	public void addPlayerObserver(Player player, Observer o) {
-		player.addObserver(o);
+	public void addObserver(Observer o) {
+		game.addObserver(o);
 	}
 	
 	public void saveDice(String player, int i) {
-		getPlayer(player).saveDice(i);
+		game.saveDice(player, i);
 	}
 	
 	public void setNextTurn(String player) {
@@ -52,13 +55,11 @@ public class Service {
 	}
 	
 	public void resetDice() {
-		for(Player p: getPlayers()) {
-			p.reset();
-		}
+		game.reset();
 	}
 	
 	public void setScore(String player, Category category, int score) {
-		getPlayer(player).updateScoreSheet(category, score);
+		game.updateScoreSheet(players.getPlayer(player), category, score);
 	}
 
 	

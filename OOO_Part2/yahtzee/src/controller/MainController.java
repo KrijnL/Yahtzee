@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import view.Observer;
+import domain.Observer;
 import domain.model.Category;
 import domain.model.Player;
 import domain.model.Service;
@@ -69,19 +69,16 @@ public class MainController implements Controller {
 
 	}
 
-	public void addPlayerObserver(Player player, Observer o) {
-		service.addPlayerObserver(player, o);
+	public void addObserver(Observer o) {
+		service.addObserver(o);
 	}
 
 	@Override
 	public void handleRoll(String playerName) {
 		if(firstRoll) {
 			firstRoll =false;
-			for(Player player: service.getPlayers()) {
-				for(YahtzeeWindow w : windows.values()) {
-					addPlayerObserver(player, w);
-				}
-			}
+			
+			
 		}
 		view.closeInput();
 		Player p = service.getPlayer(playerName);
@@ -91,9 +88,9 @@ public class MainController implements Controller {
 
 	@Override
 	public void saveDice(String player, int dice) {
-		if(player.equals(getActivePlayer())) {
-			service.saveDice(player, dice);
-		}
+		//if(player.equals(getActivePlayer())) {
+			service.saveDice( player,  dice);
+		//}
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package view;
 
+import domain.Observer;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +28,7 @@ import javafx.scene.paint.Color;
 public class YahtzeeWindow extends BorderPane implements Observer{
 
 	private String player;
-	private Label playerPlaying, title;
+	private Label playerPlaying, title, categoryUsed;
 	private Button buttonRoll, buttonOk;
 	private Controller controller;
 	private ArrayList<Button> diceThrown, diceSaved;
@@ -113,8 +115,9 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		buttonOk.setOnAction(new EndTurnListener());
 		gamePane.add(buttonOk, 0, 8, 7, 1);
 
-
-
+		//categoryUsed = new Label("You have already chosen this category, please pick another one.");
+		
+		
 		Object[][] rowData = getTableRows();
 
 		table = new JTable(rowData, columns);
@@ -233,6 +236,9 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 				setScore(total, secondTotalIndex + 2);
 			}
 			break;
+		case "categoryUsed":
+			//gamePane.add(categoryUsed, 0, 10, 5,0);
+			break;
 		default:
 			break;
 		}
@@ -331,8 +337,11 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 			for(Button b: diceSaved) {
 				result.add(Integer.parseInt(b.getText()));
 			}
+			//gamePane.getChildren().remove(categoryUsed);
+			
 			controller.calculateScore(player, result, cbxCategory.getValue());
 			controller.handleEndTurn(player );
+			cbxCategory.getItems().remove(cbxCategory.getValue());
 
 
 		}
