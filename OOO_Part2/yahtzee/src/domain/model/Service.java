@@ -29,8 +29,8 @@ public class Service {
 		return players.getPlayer(player);
 	}
 	
-	public void throwDice(Player player){
-		game.throwDice(player);
+	public int throwDice(Player player){
+		return game.throwDice(player);
 	}
 	
 	public void addObserver(Observer o) {
@@ -60,6 +60,41 @@ public class Service {
 	
 	public void setScore(String player, Category category, int score) {
 		game.updateScoreSheet(players.getPlayer(player), category, score);
+	}
+	
+	public boolean yahtzeeAttained(Player player) {
+		return game.yahtzeeAttained(player);
+	}
+
+	public boolean isGameDone() {
+		
+		return game.isDone();
+	}
+
+	public String getWinningPlayer() {
+		return game.getWinningPlayer().toString();
+	}
+
+	public int getTotalPoints(String winner) {
+		return game.getTotalScore(getPlayer(winner));
+	}
+
+	public Category getFirstFreeCategory(Player player) {
+		return game.getFirstFreeCategory(player);
+		
+	}
+	
+	public int getScore(Player player, Category category) {
+		return game.getScore(player, category);
+	}
+	
+	public void addBonus(Player player) {
+		game.updateScoreSheet(player, game.getFirstFreeCategory(player), 100);
+	}
+
+	public void unSaveDice(String player, int dice) {
+		game.unSaveDice(player, dice);
+		
 	}
 
 	

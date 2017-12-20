@@ -17,7 +17,8 @@ public class Dice {
 	
 	
 	public int throwDice() {
-		this.numberThrown = rand.nextInt(6) + 1;
+		//this.numberThrown = rand.nextInt(6) + 1;
+		numberThrown = 5;
 		return numberThrown;
 	}
 	

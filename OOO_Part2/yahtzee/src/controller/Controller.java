@@ -6,7 +6,7 @@ import domain.model.Category;
 import domain.model.Player;
 import domain.Observer;
 
-public interface Controller extends InputController{
+public interface Controller extends InputController, OptionController{
 	
 	public void startView();
 	public void addPlayer(String player);
@@ -17,5 +17,6 @@ public interface Controller extends InputController{
 	public void handleEndTurn(String player);
 	public String getActivePlayer();
 	public void calculateScore(String player, List<Integer> result, Category value);
+	public void unSaveDice(String player, int dice);
 
 }

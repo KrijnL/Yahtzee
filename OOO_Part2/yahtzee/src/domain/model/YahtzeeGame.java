@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import domain.DomainException;
 import domain.Observer;
 import domain.Subject;
 import domain.db.PlayerGroup;
@@ -30,7 +31,7 @@ public class YahtzeeGame implements Subject {
 
 	}
 
-	public void throwDice(Player player){
+	public int throwDice(Player player){
 		//notifies the observers with a list of integers.
 		//if turn is false, the observers will be notified with "noMoreTurns"
 		List<Integer> result = new ArrayList<Integer>();
@@ -41,10 +42,22 @@ public class YahtzeeGame implements Subject {
 					result.add(d.throwDice());
 				}
 			}
+			int number = result.get(0);
+			boolean yahtzee = true;
+			for(int n : result) {
+				if(n != number)
+					yahtzee = false;
+			}
+			int returnVal=0;
+			if(yahtzee)
+				returnVal = number;
+			
 			result.add(turns);
 			notifyObservers("throwDice", result);
+			return returnVal;
 		}else {
 			notifyObservers("noMoreTurns", null);
+			return 0;
 		}
 
 	}
@@ -62,20 +75,48 @@ public class YahtzeeGame implements Subject {
 			for(Dice d : dice) {
 				System.out.println(d.isSaved());
 			}
-
+			//int[] ints = {counter, i};
 			//Notify observers with the index of the dice that is saved.
-			notifyObservers("saveDice", counter);
+			notifyObservers("saveDice", i);
 		}
 	}
 
 	public void updateScoreSheet(Player player, Category category, int score) {
 		//verander enkel als categorie nog niet gekozen is.
-
+		if(score == 50 && getScoreSheet(player).get(category)>0) {
+			score = 100;
+			for(Category c: Category.values()) {
+				if(getScoreSheet(player).get(c) < 0) {
+					category = c;
+				}
+			}
+		}
 		getScoreSheet(player).replace(category, score);
+		
 		Object[] result = {category, score};
 		notifyObservers("updateScore", result);
+		
+		
 
 
+	}
+	
+	
+	//Returns true when all categories have been filled in on every scoresheet.
+	public boolean isDone() {
+		boolean done = true;
+		for(Player p: players.getPlayers()) {
+			for(Category c: Category.values()) {
+				if(getScoreSheet(p).get(c) < 0) {
+					done = false;
+				}
+			}
+		}
+		return done;
+	}
+	
+	public boolean yahtzeeAttained(Player player) {
+		return getScoreSheet(player).get(Category.YAHTZEE) == 50;
 	}
 
 	public void reset() {
@@ -122,6 +163,31 @@ public class YahtzeeGame implements Subject {
 	private Map<Category, Integer> getScoreSheet(Player player){
 		return scoreSheets.get(player);
 	}
+	
+	public int getTotalScore(Player player) {
+		Map<Category, Integer> sheet = getScoreSheet(player);
+		int total = 0;
+		for(Category c: Category.values()) {
+			total += sheet.get(c);
+			if(c.equals(Category.SIXES)) {
+				if(total >= 65)
+					total += 35;
+			}
+		}
+		return total;
+	}
+	
+	public Player getWinningPlayer() {
+		int score = -1;
+		Player player = null;
+		for(Player p: players.getPlayers()) {
+			if(getTotalScore(p) > score) {
+				score = getTotalScore(p);
+				player = p;
+			}
+		}
+		return player;
+	}
 
 
 	@Override
@@ -144,6 +210,39 @@ public class YahtzeeGame implements Subject {
 		for(Observer o: observers) {
 			o.update(type , args);
 		}
+	}
+
+	public Category getFirstFreeCategory(Player player) {
+		Map<Category, Integer> scoreSheet = getScoreSheet(player);
+		for(Category c : Category.values()) {
+			if(scoreSheet.get(c) == -1)
+				return c;
+		}
+		throw new DomainException("No more empty categories");
+	}
+
+	public int getScore(Player player, Category category) {
+		return getScoreSheet(player).get(category);
+	}
+
+	public void unSaveDice(String player, int i) {
+		if(players.getActivePlayer().equals(player)) {
+			int counter = 0;
+			for(int x = 0; x < i; x++) {
+				if(dice.get(x).isSaved()) {
+					counter++;
+				}
+			}
+			dice.get(i).setSaved(false);
+			System.out.println("dice: \n");
+			for(Dice d : dice) {
+				System.out.println(d.isSaved());
+			}
+			//int[] ints = {counter, i};
+			//Notify observers with the index of the dice that is saved.
+			notifyObservers("unSaveDice", i);
+		}
+		
 	}
 
 

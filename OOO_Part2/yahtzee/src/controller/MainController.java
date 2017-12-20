@@ -1,5 +1,6 @@
 package controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import domain.DomainException;
 import domain.Observer;
 import domain.model.Category;
 import domain.model.Player;
@@ -31,6 +33,7 @@ public class MainController implements Controller {
 		view = new YahtzeeView("yahtzee", primaryStage, new InputWindow(this) );
 		windows = new HashMap<String, YahtzeeWindow>();
 	}
+	
 
 	@Override
 	public void startView() {
@@ -82,9 +85,66 @@ public class MainController implements Controller {
 		}
 		view.closeInput();
 		Player p = service.getPlayer(playerName);
-		service.throwDice(p);
+		int number = service.throwDice(p);
+		if(number > 0 && service.yahtzeeAttained(p)) {
+			addBonus(number, p);
+		}
 
 	}
+
+	private void addBonus(int number, Player player) {
+		/*String match = match(result, Category.YAHTZEE.getPattern());
+		*/
+		
+		Category cat = null;
+		try {	
+				cat = service.getFirstFreeCategory(player);
+				service.addBonus(player);
+				switch(number) {
+				case 1:
+					cat = Category.ACES;
+					break;
+				case 2:
+					cat = Category.TWOS;
+					break;
+				case 3:
+					cat = Category.THREES;
+					break;
+				case 4:
+					cat = Category.FOURS;
+					break;
+				case 5:
+					cat = Category.FIVES;
+					break;
+				case 6:
+					cat = Category.SIXES;
+					break;
+				default:
+					cat = null;
+				}
+				ArrayList<Integer> numbers = new ArrayList<Integer>();
+				for( int i=0; i<6; i++) {
+					numbers.add(number);
+				}
+				int score = service.getScore(player, cat );
+				if(score == -1) {
+					service.setScore(player.getName(), cat, number*5);
+				}else if(service.getScore(player, Category.FULL_HOUSE)==-1){
+					calculateScore(player.getName(), numbers, Category.FULL_HOUSE);
+				}else if(service.getScore(player, Category.SMALL_STRAIGHT) == -1) {
+					calculateScore(player.getName(), numbers, Category.SMALL_STRAIGHT);
+				}else if(service.getScore(player, Category.LARGE_STRAIGHT) == -1) {
+					calculateScore(player.getName(), numbers, Category.LARGE_STRAIGHT);
+				}
+				handleEndTurn(player.getName());
+		}catch(DomainException e) {
+			endGame();
+		}
+		
+		
+		
+	}
+
 
 	@Override
 	public void saveDice(String player, int dice) {
@@ -120,9 +180,16 @@ public class MainController implements Controller {
 			result += i.toString();
 		}
 		if(category!=null) {
-			String match = match(result, category.getPattern());
+			//Check for bonus
+			String match = match(result, Category.YAHTZEE.getPattern());
+			boolean bonus = false;
+			if(match.length() == 5 && service.yahtzeeAttained(service.getPlayer(player))) {
+				bonus = true;
+			}
+			
+			match = match(result, category.getPattern());
 			boolean matches = !match.equals("");
-
+			
 			int score=0;
 			switch(category) {
 			case ACES:
@@ -137,15 +204,15 @@ public class MainController implements Controller {
 					score = Integer.parseInt(match.substring(0, 1))*match.length();
 				break;
 			case FULL_HOUSE:
-				if(matches)
+				if(matches || bonus)
 					score = 25;
 				break;
 			case SMALL_STRAIGHT:
-				if(matches)
+				if(matches || bonus)
 					score = 30;
 				break;
 			case LARGE_STRAIGHT:
-				if(matches)
+				if(matches || bonus)
 					score = 40;
 				break;
 			case YAHTZEE:
@@ -163,7 +230,17 @@ public class MainController implements Controller {
 			}
 			service.setScore(getActivePlayer(), category, score);
 		}
+		if(service.isGameDone()) {
+			endGame();
+			
+		}
 
+	}
+	
+	private void endGame() {
+		String winner = service.getWinningPlayer();
+		int points = service.getTotalPoints(winner);
+		view.openEndWindow(this, points , winner);
 	}
 
 	private String match(String text, String pattern) {
@@ -174,6 +251,25 @@ public class MainController implements Controller {
 		}
 		else return "";
 
+	}
+
+	@Override
+	public void handleYes() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void handleNo() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void unSaveDice(String player, int dice) {
+		service.unSaveDice(player, dice);
+		
 	}
 
 
