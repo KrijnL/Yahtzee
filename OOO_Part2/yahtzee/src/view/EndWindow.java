@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 public class EndWindow extends GridPane {
 	
@@ -33,7 +34,7 @@ public class EndWindow extends GridPane {
 
 		buttonYes = new Button("Yes");
 		add(buttonYes, 0, 3);
-		buttonYes.setOnAction(new YesListener());
+		buttonYes.setOnAction(new YesListener(buttonYes));
 		buttonNo = new Button("No");
 		add(buttonNo, 1, 3);
 		buttonNo.setOnAction(new NoListener());
@@ -42,10 +43,16 @@ public class EndWindow extends GridPane {
 	}
 	
 class YesListener implements EventHandler<ActionEvent> {
-		
+		private Button button;
+	
+		public YesListener(Button b) {
+			button = b;
+		}
 		@Override
 		public void handle(ActionEvent event) {
 			controller.handleYes();
+			Stage stage = (Stage) button.getScene().getWindow();
+			stage.close();
 		}
 	}
 

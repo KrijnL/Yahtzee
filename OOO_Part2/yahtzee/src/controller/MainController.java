@@ -13,6 +13,7 @@ import domain.Observer;
 import domain.model.Category;
 import domain.model.Player;
 import domain.model.Service;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import view.InputWindow;
 import view.View;
@@ -160,7 +161,7 @@ public class MainController implements Controller {
 		windows.get(player).setPassive();
 		windows.get(getActivePlayer()).setActive();
 		for(YahtzeeWindow w : windows.values()) {
-			w.reset();
+			w.resetDice();
 		}
 
 
@@ -255,13 +256,17 @@ public class MainController implements Controller {
 
 	@Override
 	public void handleYes() {
-		// TODO Auto-generated method stub
+		System.out.println("reset");
+		service.resetGame();
+		for(YahtzeeWindow w : windows.values()) {
+			w.reset();
+		}
 		
 	}
 
 	@Override
 	public void handleNo() {
-		// TODO Auto-generated method stub
+		Platform.exit();
 		
 	}
 

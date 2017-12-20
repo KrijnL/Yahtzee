@@ -55,7 +55,7 @@ public class Service {
 	}
 	
 	public void resetDice() {
-		game.reset();
+		game.resetDice();
 	}
 	
 	public void setScore(String player, Category category, int score) {
@@ -99,6 +99,11 @@ public class Service {
 
 	public void resetScore(String player) {
 		game.removeScore(this.getPlayer(player));
+		
+	}
+
+	public void resetGame() {
+		game.reset();
 		
 	}
 

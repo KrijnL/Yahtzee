@@ -54,8 +54,9 @@ public class YahtzeeView extends Stage implements View {
 	}
 	
 	public void closeInput() {
-		stage.hide();
+		stage.close();
 	}
+	
 	
 
 	private Stage getStage() {

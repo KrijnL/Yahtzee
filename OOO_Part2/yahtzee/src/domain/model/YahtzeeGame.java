@@ -53,7 +53,7 @@ public class YahtzeeGame implements Subject {
 			int returnVal=0;
 			if(yahtzee)
 				returnVal = number;
-			
+
 			result.add(turns);
 			notifyObservers("throwDice", result);
 			return returnVal;
@@ -85,25 +85,19 @@ public class YahtzeeGame implements Subject {
 
 	public void updateScoreSheet(Player player, Category category, int score) {
 		//verander enkel als categorie nog niet gekozen is.
-		if(score == 50 && getScoreSheet(player).get(category)>0) {
-			score = 100;
-			for(Category c: Category.values()) {
-				if(getScoreSheet(player).get(c) < 0) {
-					category = c;
-				}
-			}
-		}
-		getScoreSheet(player).replace(category, score);
-		
-		Object[] result = {category, score};
-		notifyObservers("updateScore", result);
-		
-		
+		//if(getScore(player, category) < 0) {
+		System.out.println("score: " + score);
+			getScoreSheet(player).replace(category, score);
+
+			Object[] result = {category, score};
+			notifyObservers("updateScore", result);
+		//}
+
 
 
 	}
-	
-	
+
+
 	//Returns true when all categories have been filled in on every scoresheet.
 	public boolean isDone() {
 		boolean done = true;
@@ -116,17 +110,22 @@ public class YahtzeeGame implements Subject {
 		}
 		return done;
 	}
-	
+
 	public boolean yahtzeeAttained(Player player) {
 		return getScoreSheet(player).get(Category.YAHTZEE) == 50;
 	}
 
-	public void reset() {
+	public void resetDice() {
 		//remove all dice and make a new set
 		dice.clear();
 		makeDice();
 		//reset turns to 3
 		turns = 3;
+	}
+
+	public void reset() {
+		resetDice();
+		resetScoreSheets();
 	}
 
 
@@ -165,12 +164,15 @@ public class YahtzeeGame implements Subject {
 	private Map<Category, Integer> getScoreSheet(Player player){
 		return scoreSheets.get(player);
 	}
-	
+
 	public int getTotalScore(Player player) {
 		Map<Category, Integer> sheet = getScoreSheet(player);
 		int total = 0;
+		
 		for(Category c: Category.values()) {
-			total += sheet.get(c);
+			if(sheet.get(c)>0) {
+				total += sheet.get(c);
+			}
 			if(c.equals(Category.SIXES)) {
 				if(total >= 65)
 					total += 35;
@@ -178,7 +180,7 @@ public class YahtzeeGame implements Subject {
 		}
 		return total;
 	}
-	
+
 	public Player getWinningPlayer() {
 		int score = -1;
 		Player player = null;
@@ -244,9 +246,9 @@ public class YahtzeeGame implements Subject {
 			//Notify observers with the index of the dice that is saved.
 			notifyObservers("unSaveDice", i);
 		}
-		
+
 	}
-	
+
 	public void removeScore(Player player) {
 		scoreSheets.get(player).clear();
 		for(Category c :Category.values()) {

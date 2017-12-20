@@ -37,11 +37,11 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 	private ComboBox<Category> cbxCategory;
 	private HBox titlePane;
 	private GridPane gamePane;
-	private SwingNode jTableNode;
 	private JTable table;
 	private ArrayList<Object> categoryNames = new ArrayList<Object>();
 	private Object[] columns = {"", "Game 1"};
 	private int gameNumber = 1;
+	private SwingNode jTableNode;
 
 
 	public YahtzeeWindow(String player, Controller controller, boolean active) {
@@ -113,7 +113,7 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		buttonOk = new Button("End Turn");
 		buttonOk.setOnAction(new EndTurnListener());
 		gamePane.add(buttonOk, 0, 8, 7, 1);
-		
+
 		//Stop Game Button
 		buttonStop = new Button("Give up");
 		buttonStop.setOnAction(new GiveUpListener());
@@ -249,9 +249,6 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 				setScore(total, secondTotalIndex + 2);
 			}
 			break;
-		case "categoryUsed":
-			//gamePane.add(categoryUsed, 0, 10, 5,0);
-			break;
 		default:
 			break;
 		}
@@ -259,7 +256,7 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 	}
 
 	//Reset gamePane to initial state.
-	public void reset() {
+	public void resetDice() {
 		//Remove all dice buttons from the gamePane and clear the arrayLists containing them.
 		//then remake all buttons, set the new player playing and reset button text to Roll Dice.
 		for(int i = 0; i<diceThrown.length; i++) {
@@ -274,6 +271,30 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		makeDiceButtons();
 		setPlayerPlaying();
 		buttonRoll.setText("Roll Dice");
+
+
+	}
+
+	private void resetScoreSheet() {
+		//remove scoresheets
+		gamePane.getChildren().remove(jTableNode);
+
+		//add new ones
+		Object[][] rowData = getTableRows();
+
+		table = new JTable(rowData, columns);
+		table.setEnabled(false);
+
+		JScrollPane jsp = new JScrollPane(table) ;
+		jTableNode = new SwingNode();
+		//jsp.setMaximumSize(new Dimension(20000, 40));
+		jTableNode.setContent(jsp);
+		gamePane.add(jTableNode, 12, 0, 10, 30);
+	}
+	
+	public void reset() {
+		resetDice();
+		resetScoreSheet();
 	}
 
 
@@ -403,7 +424,7 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		}
 
 	}
-	
+
 	class GiveUpListener implements EventHandler<ActionEvent> {
 
 		@Override
