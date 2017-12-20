@@ -97,6 +97,11 @@ public class Service {
 		
 	}
 
+	public void resetScore(String player) {
+		game.removeScore(this.getPlayer(player));
+		
+	}
+
 	
 	
 }

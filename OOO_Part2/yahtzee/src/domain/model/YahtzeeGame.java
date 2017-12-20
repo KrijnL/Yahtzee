@@ -40,6 +40,8 @@ public class YahtzeeGame implements Subject {
 			for(Dice d: dice) {
 				if(!d.isSaved()) {
 					result.add(d.throwDice());
+				}else {
+					result.add(d.getNumberThrown());
 				}
 			}
 			int number = result.get(0);
@@ -243,6 +245,13 @@ public class YahtzeeGame implements Subject {
 			notifyObservers("unSaveDice", i);
 		}
 		
+	}
+	
+	public void removeScore(Player player) {
+		scoreSheets.get(player).clear();
+		for(Category c :Category.values()) {
+			scoreSheets.get(player).put(c, 0);
+		}
 	}
 
 

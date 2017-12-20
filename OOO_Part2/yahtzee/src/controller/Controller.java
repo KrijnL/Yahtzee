@@ -18,5 +18,7 @@ public interface Controller extends InputController, OptionController{
 	public String getActivePlayer();
 	public void calculateScore(String player, List<Integer> result, Category value);
 	public void unSaveDice(String player, int dice);
+	public void resetScore(String player);
+	public void endGame();
 
 }

@@ -31,7 +31,7 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 
 	private String player;
 	private Label playerPlaying, title, categoryUsed;
-	private Button buttonRoll, buttonOk;
+	private Button buttonRoll, buttonOk, buttonStop;
 	private Controller controller;
 	private Button[] diceThrown, diceSaved;
 	private ComboBox<Category> cbxCategory;
@@ -72,8 +72,8 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		}
 
 	}
-	
-	
+
+
 	//Make a row for each category and init values to 0
 	private Object[][] getTableRows() {
 		Object[][] result = new Object[categoryNames.size()][];
@@ -87,7 +87,7 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		}
 		return result;
 	}
-	
+
 	//Returns the pane where the main game is played
 	private Node addGamePane() {
 		gamePane = new GridPane();
@@ -113,19 +113,23 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		buttonOk = new Button("End Turn");
 		buttonOk.setOnAction(new EndTurnListener());
 		gamePane.add(buttonOk, 0, 8, 7, 1);
-
 		
+		//Stop Game Button
+		buttonStop = new Button("Give up");
+		buttonStop.setOnAction(new GiveUpListener());
+		gamePane.add(buttonStop, 0, 15, 7, 1);
+
 		Object[][] rowData = getTableRows();
 
 		table = new JTable(rowData, columns);
 		table.setEnabled(false);
-		
+
 		JScrollPane jsp = new JScrollPane(table) ;
 		SwingNode jTableNode = new SwingNode();
 		//jsp.setMaximumSize(new Dimension(20000, 40));
 		jTableNode.setContent(jsp);
 		gamePane.add(jTableNode, 12, 0, 10, 30);
-		
+
 		return gamePane;
 
 	}
@@ -150,18 +154,18 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		titlePane.getChildren().addAll(title, spacer, playerPlaying);
 		return titlePane;
 	}
-	
+
 	//Removes a button from the gamePane
 	private void removeButton(Button button) {
 		gamePane.getChildren().remove(button);
 
 	}
-	
+
 	//Set this gamePane to passive, meaning all buttons are removed and only the dice are displayed
 	public void setPassive() {
 		gamePane.getChildren().removeAll(buttonRoll, cbxCategory, buttonOk);
 	}
-	
+
 	//Set this gamePane to active: add roll and end turn buttons and drop down list of categories.
 	public void setActive() {
 		gamePane.add(buttonRoll, 0,0, 10, 1);
@@ -176,25 +180,26 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		switch(type) {
 		case "throwDice":
 			if(args instanceof List<?>) {
-			@SuppressWarnings("unchecked")
-			List<Integer> results = (List<Integer>) args;
-			
-			if(results.size()>0) {
-				for(int i = 0 ;i < diceThrown.length;  i++) {
-					Button b = diceThrown[i];
-					b.setText(""+results.get(i));
+				@SuppressWarnings("unchecked")
+				List<Integer> results = (List<Integer>) args;
 
-				}
-				//Integer at index diceThrown.size() is the amount of turns the player has left.
-				if(results.get(diceThrown.length) == 0) {
-					for(int i=diceThrown.length-1; i>=0; i--) {
+				if(results.size()>0) {
+					for(int i = 0 ;i < diceThrown.length;  i++) {
 						if(diceThrown[i]!=null) {
-						saveButton(i);
+							Button b = diceThrown[i];
+							b.setText(""+results.get(i));
 						}
-						buttonRoll.setText("No more turns!");
+					}
+					//Integer at index diceThrown.size() is the amount of turns the player has left.
+					if(results.get(diceThrown.length) == 0) {
+						for(int i=diceThrown.length-1; i>=0; i--) {
+							if(diceThrown[i]!=null) {
+								saveButton(i);
+							}
+							buttonRoll.setText("No more turns!");
+						}
 					}
 				}
-			}
 			}
 			break;
 		case "saveDice":
@@ -218,7 +223,7 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 				int index = categoryNames.indexOf(c);
 				cbxCategory.getItems().remove(c);
 				setScore(score, index);
-				
+
 				//Compute Totals
 				int total = 0;
 				int firstTotalIndex = categoryNames.indexOf(Category.SIXES)+1;
@@ -252,7 +257,7 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		}
 
 	}
-	
+
 	//Reset gamePane to initial state.
 	public void reset() {
 		//Remove all dice buttons from the gamePane and clear the arrayLists containing them.
@@ -270,14 +275,14 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		setPlayerPlaying();
 		buttonRoll.setText("Roll Dice");
 	}
-	
-	
+
+
 	private void clearDice() {
 		for(int i =0; i<diceThrown.length; i++) {
 			diceThrown[i]=null;
 			diceSaved[i]=null;
 		}
-		
+
 	}
 
 
@@ -286,7 +291,7 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 	private void setScore(Object value, int rowIndex) {
 		table.getModel().setValueAt(value, rowIndex, gameNumber);
 	}
-	
+
 	private int getScore(int rowIndex) {
 		return Integer.parseInt(table.getModel().getValueAt(rowIndex, gameNumber).toString());
 	}
@@ -294,24 +299,24 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 	private void setPlayerPlaying() {
 		playerPlaying.setText(controller.getActivePlayer() + " playing");
 	}
-	
+
 	//Moves a button from the dice to be thrown to the dice that are saved.
 	private void saveButton(int i) {
 		diceSaved[i]=diceThrown[i];
 		diceThrown[i]=null;
-		
+
 		removeButton(diceSaved[i]);
 		gamePane.add(diceSaved[i], i, 10);
 	}
-	
+
 	private void unSaveButton(int i) {
-		
+
 		diceThrown[i]=diceSaved[i];
 		diceSaved[i]=null;
 		removeButton(diceThrown[i]);
 		gamePane.add(diceThrown[i],  i, 3);
 	}
-	
+
 	//Make 5 Dice buttons and add a ButtonListener to each.
 	private void makeDiceButtons() {
 		for(int i = 0; i < 5; i++) {
@@ -322,7 +327,7 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 			b.setOnAction(new DiceButtonListener(i, b));
 		}
 	}
-	
+
 	private int getTotalScore() {
 		return getScore(categoryNames.size()-1);
 	}
@@ -336,7 +341,7 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		public DiceButtonListener(int dice, Button button) {
 			this.dice = dice;
 			this.button = button;
-			
+
 		}
 
 		@Override
@@ -361,8 +366,8 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		}
 
 	}
-	
-	
+
+
 	//Gets called whenever the Roll button is pressed.
 	class RollButtonListener implements EventHandler<ActionEvent> {
 
@@ -381,7 +386,7 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		public void handle(ActionEvent event) {
 			for(int i=diceThrown.length-1; i>=0; i--) {
 				if(diceThrown[i]!=null) {
-				saveButton(i);
+					saveButton(i);
 				}
 			}
 			List<Integer> result = new ArrayList<Integer>();
@@ -389,10 +394,23 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 				result.add(Integer.parseInt(b.getText()));
 			}
 			//gamePane.getChildren().remove(categoryUsed);
-			
+
 			controller.calculateScore(player, result, cbxCategory.getValue());
 			controller.handleEndTurn(player );
-			
+
+
+
+		}
+
+	}
+	
+	class GiveUpListener implements EventHandler<ActionEvent> {
+
+		@Override
+		public void handle(ActionEvent event) {
+			controller.resetScore(player);
+			controller.endGame();
+
 
 
 		}

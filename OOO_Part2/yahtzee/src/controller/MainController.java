@@ -237,7 +237,7 @@ public class MainController implements Controller {
 
 	}
 	
-	private void endGame() {
+	public void endGame() {
 		String winner = service.getWinningPlayer();
 		int points = service.getTotalPoints(winner);
 		view.openEndWindow(this, points , winner);
@@ -269,6 +269,13 @@ public class MainController implements Controller {
 	@Override
 	public void unSaveDice(String player, int dice) {
 		service.unSaveDice(player, dice);
+		
+	}
+
+
+	@Override
+	public void resetScore(String player) {
+		service.resetScore(player);
 		
 	}
 

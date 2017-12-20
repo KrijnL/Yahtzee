@@ -17,8 +17,8 @@ public class Dice {
 	
 	
 	public int throwDice() {
-		//this.numberThrown = rand.nextInt(6) + 1;
-		numberThrown = 5;
+		this.numberThrown = rand.nextInt(6) + 1;
+		//numberThrown = 5;
 		return numberThrown;
 	}
 	
@@ -32,6 +32,10 @@ public class Dice {
 	
 	public boolean isSaved() {
 		return this.saved;
+	}
+	
+	public int getNumberThrown() {
+		return this.numberThrown;
 	}
 	
 	
