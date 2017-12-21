@@ -275,6 +275,7 @@ public class MainController implements Controller {
 	@Override
 	public void handleNo() {
 		Platform.exit();
+		System.exit(0);
 		
 	}
 
