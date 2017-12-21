@@ -107,6 +107,10 @@ public class Service {
 		
 	}
 
+	public void resetTurn() {
+		players.resetTurn();
+	}
+
 	
 	
 }

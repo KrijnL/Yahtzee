@@ -42,6 +42,7 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 	private Object[] columns = {"", "Game 1"};
 	private int gameNumber = 1;
 	private SwingNode jTableNode;
+	private boolean active;
 
 
 	public YahtzeeWindow(String player, Controller controller, boolean active) {
@@ -64,6 +65,8 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 				categoryNames.add("grand total");
 			}
 		}
+		
+		this.active = active;
 
 		setTop(addTitlePane());
 		setCenter(addGamePane());
@@ -164,6 +167,7 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 	//Set this gamePane to passive, meaning all buttons are removed and only the dice are displayed
 	public void setPassive() {
 		gamePane.getChildren().removeAll(buttonRoll, cbxCategory, buttonOk);
+		active = false;
 	}
 
 	//Set this gamePane to active: add roll and end turn buttons and drop down list of categories.
@@ -171,6 +175,7 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 		gamePane.add(buttonRoll, 0,0, 10, 1);
 		gamePane.add(cbxCategory, 0, 6, 7, 1);
 		gamePane.add(buttonOk, 0, 8, 7, 1);
+		active = true;
 
 	}
 
@@ -373,11 +378,9 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 				//button.setOnAction(null);
 				if(!saved) {
 					controller.saveDice(player, dice);
-					System.out.println("saved dice:" + dice);
 					saved = true;
 				}else {
 					controller.unSaveDice(player, dice);
-					System.out.println("putback dice:" + dice);
 					saved = false;
 				}
 
@@ -436,6 +439,15 @@ public class YahtzeeWindow extends BorderPane implements Observer{
 
 		}
 
+	}
+
+	public String getPlayer() {
+		return this.player;
+	}
+
+
+	public boolean isActive() {
+		return active;
 	}
 
 

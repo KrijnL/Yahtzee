@@ -73,9 +73,7 @@ public class YahtzeeGame implements Subject {
 				}
 			}
 			dice.get(i).setSaved();
-			System.out.println("dice: \n");
 			for(Dice d : dice) {
-				System.out.println(d.isSaved());
 			}
 			//int[] ints = {counter, i};
 			//Notify observers with the index of the dice that is saved.
@@ -86,7 +84,6 @@ public class YahtzeeGame implements Subject {
 	public void updateScoreSheet(Player player, Category category, int score) {
 		//verander enkel als categorie nog niet gekozen is.
 		//if(getScore(player, category) < 0) {
-		System.out.println("score: " + score);
 			getScoreSheet(player).replace(category, score);
 
 			Object[] result = {category, score};
@@ -238,9 +235,7 @@ public class YahtzeeGame implements Subject {
 				}
 			}
 			dice.get(i).setSaved(false);
-			System.out.println("dice: \n");
 			for(Dice d : dice) {
-				System.out.println(d.isSaved());
 			}
 			//int[] ints = {counter, i};
 			//Notify observers with the index of the dice that is saved.

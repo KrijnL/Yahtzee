@@ -256,10 +256,18 @@ public class MainController implements Controller {
 
 	@Override
 	public void handleYes() {
-		System.out.println("reset");
 		service.resetGame();
+		
+		service.resetTurn();
+		
 		for(YahtzeeWindow w : windows.values()) {
 			w.reset();
+			if(w.getPlayer().equals(service.getActivePlayer().getName())) {
+				if(!w.isActive())
+					w.setActive();
+			}else {
+				w.setPassive();
+			}
 		}
 		
 	}

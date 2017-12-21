@@ -52,6 +52,13 @@ public class PlayerGroup {
 		
 	}
 	
+	public void resetTurn() {
+		for(Player p : players) {
+			p.setTurn(false);
+		}
+		players.get(0).setTurn(true);
+	}
+	
 	public String getActivePlayer() {
 		for(Player p: getPlayers()) {
 			if(p.getTurn())
